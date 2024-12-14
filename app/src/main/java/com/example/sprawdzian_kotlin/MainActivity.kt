@@ -5,10 +5,12 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.rounded.Info
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,7 +22,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-data class ActivityItem(val name: String, val count: Int, val img_name: String)
+data class ActivityItem(val name: String, val count: Int, val icon: @Composable () -> Unit)
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,10 +36,10 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun AppScreen() {
     val activities = listOf(
-        ActivityItem("Committed changes", 22, "commend_changes"),
-        ActivityItem("Comment count", 15, "commend_count"),
-        ActivityItem("Merged pull requests", 8, "merge_request"),
-        ActivityItem("Closed pull requests", 3, "closed_comit")
+        ActivityItem("Committed changes", 22, { Icon(Icons.Default.CheckCircle, contentDescription = "Committed changes", modifier = Modifier.size(32.dp)) }),
+        ActivityItem("Comment count", 15, { Icon(Icons.Default.AddCircle, contentDescription = "Comment count", modifier = Modifier.size(32.dp)) }),
+        ActivityItem("Merged pull requests", 8, { Icon(Icons.Rounded.Info, contentDescription = "Merged pull requests", modifier = Modifier.size(32.dp)) }),
+        ActivityItem("Closed pull requests", 3, { Icon(Icons.Default.Close, contentDescription = "Closed pull requests", modifier = Modifier.size(32.dp)) })
     )
 
     Surface(
@@ -71,6 +73,7 @@ fun AppScreen() {
         }
     }
 }
+
 @Composable
 fun DisplayMessageButton() {
     val context = LocalContext.current
@@ -93,16 +96,14 @@ fun DisplayMessageButton() {
     }
 }
 
-
 @Composable
 fun HeaderSection(name: String) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.fillMaxWidth()
     ) {
         Image(
             painter = painterResource(id = R.drawable.man_person_icon),
-            contentDescription = "User Icon",
+            contentDescription = "User",
             modifier = Modifier.size(64.dp)
         )
         Spacer(modifier = Modifier.width(16.dp))
@@ -124,14 +125,6 @@ fun HeaderSection(name: String) {
 
 @Composable
 fun ActivitiesList(activities: List<ActivityItem>) {
-    // Mapowanie nazw obrazów na zasoby
-    val imageResources = mapOf(
-        "commend_changes" to R.drawable.commited_changes,
-        "commend_count" to R.drawable.commend_count,
-        "merge_request" to R.drawable.merge_request,
-        "closed_comit" to R.drawable.closed_comit
-    )
-
     Text(
         text = "Recent Activities",
         fontSize = 24.sp,
@@ -144,29 +137,25 @@ fun ActivitiesList(activities: List<ActivityItem>) {
 
     Column(modifier = Modifier.fillMaxWidth()) {
         activities.forEach { activity ->
-            val imgResId = imageResources[activity.img_name]
-
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(8.dp),
-                horizontalArrangement = Arrangement.Start
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                imgResId?.let {
-                    Image(
-                        painter = painterResource(id = it),
-                        contentDescription = activity.name,
-                        modifier = Modifier
-                            .size(24.dp)
-                    )
-                }
+
+                activity.icon()
+
                 Spacer(modifier = Modifier.width(12.dp))
 
                 Text(
                     text = activity.name,
                     fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.weight(1f)
                 )
+
 
                 Text(
                     text = activity.count.toString(),
@@ -174,6 +163,7 @@ fun ActivitiesList(activities: List<ActivityItem>) {
                     textAlign = TextAlign.End,
                     modifier = Modifier
                         .weight(1f)
+                        .padding(end = 12.dp)
                 )
             }
         }
