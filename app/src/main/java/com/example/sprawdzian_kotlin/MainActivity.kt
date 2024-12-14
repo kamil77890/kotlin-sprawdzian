@@ -1,6 +1,7 @@
 package com.example.sprawdzian_kotlin
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -12,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -50,7 +52,7 @@ fun AppScreen() {
         ) {
             HeaderSection(name = "Kamil Jakubisiak")
 
-            Divider(
+            HorizontalDivider(
                 modifier = Modifier.padding(vertical = 10.dp),
                 thickness = 1.dp,
                 color = Color.Gray
@@ -59,29 +61,38 @@ fun AppScreen() {
             ActivitiesList(activities = activities)
             Spacer(modifier = Modifier.weight(1f))
 
-            Divider(
+            HorizontalDivider(
                 modifier = Modifier.padding(vertical = 16.dp),
                 thickness = 1.dp,
                 color = Color.Gray
             )
 
-            Button(
-                onClick = { /* Button action */ },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6200EE)),
-                shape = RoundedCornerShape(8.dp),
-            ) {
-                Text(
-                    text = "Display message",
-                    color = Color.White,
-                    fontSize = 16.sp
-                )
-            }
+            DisplayMessageButton()
         }
     }
 }
+@Composable
+fun DisplayMessageButton() {
+    val context = LocalContext.current
+
+    Button(
+        onClick = {
+            Toast.makeText(context, "Well done!", Toast.LENGTH_SHORT).show()
+        },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
+        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6200EE)),
+        shape = RoundedCornerShape(8.dp),
+    ) {
+        Text(
+            text = "Display message",
+            color = Color.White,
+            fontSize = 16.sp
+        )
+    }
+}
+
 
 @Composable
 fun HeaderSection(name: String) {
